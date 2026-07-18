@@ -53,6 +53,8 @@ several languages and architectures — each is a worked example:
 | [hart](https://github.com/javimosch/machin-hart) | machin | native client, dual-write |
 | [grepapi](https://github.com/javimosch/grepapi) | machin + shell | shell client, dual-write |
 | [crmd](https://github.com/javimosch/crmd) + [crm-cli](https://github.com/javimosch/crm-cli) | machin | server endpoint + separate client |
+| [mago](https://github.com/javimosch/mago) | Go | dual-write (platform endpoint + relay) |
+| [automaintainer](https://github.com/javimosch/automaintainer) | Go | relay-only (no local endpoint) |
 | [remotecmd](https://github.com/javimosch/remotecmd) | Go | relay-only (peer tool, no local store) |
 | [portier](https://github.com/javimosch/portier) | machin | endpoint + CLI |
 | [machin-idp](https://github.com/javimosch/machin-idp) | machin | endpoint + CLI |
