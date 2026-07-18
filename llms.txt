@@ -1,0 +1,44 @@
+# feedback-spec
+
+> A convention for giving an agent-first CLI a `feedback` command that dual-writes to the
+> tool's own endpoint AND a central relay. Small on purpose: one JSON body, one POST route,
+> one CLI subcommand. Add it to a new tool in ~30 minutes.
+
+You are likely here because you are adding feedback to a CLI, or integrating with a feedback
+relay. Read in this order:
+
+- [PROTOCOL.md](PROTOCOL.md): the normative contract — wire format, endpoint, CLI, storage,
+  idempotency, admin-gated reads. Start here for "what MUST be true".
+- [RECIPE.md](RECIPE.md): the 4-step how-to with machin, Go, and shell snippets. Start here
+  for "how do I add it".
+- [feedback.schema.json](feedback.schema.json): JSON Schema for the submission body.
+- [SKILL.md](SKILL.md): a drop-in skill — "add a feedback command to this CLI".
+
+## The contract, minimally
+
+Submit (open, rate-limited, size-capped ≤16KB, idempotent on `id`):
+
+    POST /v1/feedback   Content-Type: application/json
+    { "app": "myapp", "version": "1.0.0", "kind": "bug",
+      "message": "required text", "context": "what I was doing",
+      "reporter": "agent", "id": "<16 random bytes hex>" }
+    -> 200 { "ok": true, "id": "<stored id>", "stored": true }
+    -> 400 message required · 413 too large · 429 rate limited
+
+CLI (`myapp feedback "<msg>" [-kind bug|idea|praise] [-context "…"]`):
+  1. build one body with a fresh `id`, tag `app`+`version`, reporter = $USER or "agent"
+  2. POST to the app's own endpoint (`MYAPP_URL` / `MYAPP_PUBLIC_URL`)
+  3. POST to the relay (`FEEDBACK_RELAY`, default https://feedback.intrane.fr, "off" = skip)
+  4. same `id` on both writes = idempotent; never fail the caller; report {stored, relayed}
+
+Read (admin only): GET /v1/feedback?app=&limit=  with  Authorization: Bearer $FEEDBACK_ADMIN_TOKEN
+
+## Reference relay
+
+machin-feedback — https://github.com/javimosch/machin-feedback (live: https://feedback.intrane.fr).
+The relay is swappable; nothing forces you onto it. Run your own and point FEEDBACK_RELAY at it.
+
+## Reference client implementations
+
+hart (machin), grepapi (machin+shell), crmd + crm-cli (machin), remotecmd (Go, relay-only),
+portier (machin), machin-idp (machin), chatsnip (machin). Same contract, four architectures.

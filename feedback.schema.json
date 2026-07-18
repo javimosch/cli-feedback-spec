@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/javimosch/feedback-spec/feedback.schema.json",
+  "title": "Feedback submission",
+  "description": "Body of POST /v1/feedback for the feedback-spec convention. See PROTOCOL.md §1.",
+  "type": "object",
+  "required": ["message"],
+  "additionalProperties": true,
+  "properties": {
+    "message": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The feedback text. Empty/whitespace-only is rejected with 400."
+    },
+    "app": {
+      "type": "string",
+      "maxLength": 64,
+      "description": "Short tool identifier, e.g. 'hart'. Required at the relay; an app's own endpoint may omit it."
+    },
+    "version": {
+      "type": "string",
+      "maxLength": 32,
+      "description": "The tool's version at submission time."
+    },
+    "kind": {
+      "type": "string",
+      "maxLength": 24,
+      "description": "Feedback category. Known values below; unknown values are preserved. Default 'note'.",
+      "examples": ["bug", "idea", "praise", "note"]
+    },
+    "context": {
+      "type": "string",
+      "description": "What the user or agent was doing (free text)."
+    },
+    "reporter": {
+      "type": "string",
+      "maxLength": 64,
+      "description": "Who filed it — a username, 'agent', or an email. Defaults to $USER, else 'agent'."
+    },
+    "id": {
+      "type": "string",
+      "description": "Client-generated idempotency key (reference: 16 random bytes, hex). Storage is INSERT-OR-IGNORE on this. If omitted, the server generates and returns one."
+    }
+  }
+}
