@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/javimosch/feedback-spec/feedback.schema.json",
+  "$id": "https://raw.githubusercontent.com/javimosch/cli-feedback-spec/master/feedback.schema.json",
   "title": "Feedback submission",
   "description": "Body of POST /v1/feedback for the feedback-spec convention. See PROTOCOL.md §1.",
   "type": "object",
